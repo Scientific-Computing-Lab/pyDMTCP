@@ -6,7 +6,7 @@ Supercomputers become increasingly important due to the growing demand of comput
 A Python module, "dmtcp.py", has been created to support DMTCP checkpointing both from within an interactive Python/IPython session and programmatically from within a Python program. However, this module is used internally in python programs, and cannot support interfacing DMTCP with other black-box executables.
 In this work, we extend "dmtcp.py", and firstly introduce pyDMTCP, a python module that enables python schedulers/wrappers of scientific applications to easily utilize DMTCP checkpointing via a python interface and externally to applications.
 
-<img src="./pyDMTCP.svg" width="700" height="420" >
+<img src="./pyDMTCP_.svg" width="700" height="420" >
 
 ## Dependencies
 ## Example

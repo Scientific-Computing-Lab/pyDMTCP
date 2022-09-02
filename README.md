@@ -8,5 +8,31 @@ In this work, we extend "dmtcp.py", and firstly introduce pyDMTCP, a python modu
 
 <img src="./pyDMTCP_.svg" width="700" height="420" >
 
+***Prerequisites***
+
+First, clone the pyDMTCP code provided here.
+clone https://github.com/Scientific-Computing-Lab-NRCN/pyDMTCP.git
+Then, you should install and load the supported packages (i.e. dmtcp, openmpi) to your environment.
+You will also need to install SLURM.
+In addition, you should downlowd Python3.7 with the following packages:
+•	dmtcp
+•	openmpi
+
+## Know Your Flags
+
+python dmtcpWrapper.py --start hello_test.sh --compress 3 --overwrite 1 --rollback 6
+
+•	--start : Specify the binary file you plan to run under pyDmtcp.
+
+•	--compress : Define if you want to compress the dmtcp files.
+
+•	--overwrite : Specify if you want to overwrite the last dmtcp checkpoint.
+
+•	--rollback : Define how many checkpoint files save to rollback.
+
+• --stop : Define the job number to stop.
+
+• --restart : Define the job number to restart (using the dmtcp checkpoint file).
+
 ## Dependencies
 ## Example

@@ -34,5 +34,4 @@ python dmtcpWrapper.py --start hello_test.sh --compress 3 --overwrite 1 --rollba
 
 • --restart : Define the job number to restart (using the dmtcp checkpoint file).
 
-## Dependencies
 ## Example

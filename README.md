@@ -15,7 +15,9 @@ clone https://github.com/Scientific-Computing-Lab-NRCN/pyDMTCP.git
 Then, you should install and load the supported packages (i.e. dmtcp, openmpi) to your environment.
 You will also need to install SLURM.
 In addition, you should downlowd Python3.7 with the following packages:
+
 •	dmtcp
+
 •	openmpi
 
 ## Know Your Flags

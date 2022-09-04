@@ -34,12 +34,12 @@ def write_sbatch_file(fname, data):
         fn.write(data)
 
 
-def generate_dmtcp_cmd(app_name, compress=1, interval=10, overwrite=1, rollback=1):
+def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True", rollback=1):
     '''
     Generating the dmtcp command line
-    :param compress: 0 - No; 1 - Yes
+    :param compress: False - No compression; True - Use compression
     :param interval: int as time interval between savings
-    :param overwrite: 0 - Don't overwrite last checkpoint; 1 - Overwrite last checkpoint
+    :param overwrite: False - Don't overwrite last checkpoint; True - Overwrite last checkpoint
     :param rollback: int parameter for how many chekpoints to save
     :return: None, saving the full sbatch with config
     '''
@@ -47,11 +47,11 @@ def generate_dmtcp_cmd(app_name, compress=1, interval=10, overwrite=1, rollback=
     print("app name" + app_name + " compress=" + str(compress) + " interval=" + str(interval) + " overwrite=" + str(
         overwrite) + " rollback=" + str(rollback))
     dmtcp_cmd = ["dmtcp_launch"]
-    if compress == 1:
+    if compress == "True":
         dmtcp_cmd.append("--gzip")
     if interval != "None":
         dmtcp_cmd.append("-i " + str(interval))
-    if overwrite == "1":
+    if overwrite == "True":
         dmtcp_cmd.append("--allow-file-overwrite")
     # if rollback != 1:
     # dmtcp_cmd.append("rollback=" + str(rollback))
@@ -105,10 +105,10 @@ if __name__ == '__main__':
     # for help --help
     parser = argparse.ArgumentParser(description='Running DMTCP')
     # DMTCP commands
-    parser.add_argument('--compress', help='Compress checkpoint file 0 - No ; 1 - Yes')
+    parser.add_argument('--compress', help='Compress checkpoint file False - No compression ; True - Do compression')
     parser.add_argument('--rollback', help='# of rollback check points')
     parser.add_argument('--overwrite',
-                        help='0 - Do not overwrite last checkpoint ; 1 - overwriting in cycle last checkpoint')
+                        help='False - Do not overwrite last checkpoint ; True - overwriting in cycle last checkpoint')
     parser.add_argument('--interval', help='# of seconds to create checkpoint')
     parser.add_argument('--start', help='App name to run')
     parser.add_argument('--stop', help='Stop job #')

@@ -1,4 +1,5 @@
 import subprocess
+import time
 import shlex
 import sys
 import os
@@ -72,7 +73,10 @@ def start_job(app_name):
     command = "echo $PWD ; ml dmtcp/v2.6-intel-impi ; sbatch sbatch_test.sh"
     ret = subprocess.run(command, capture_output=True, shell=True)
     print(ret.stdout.decode())
-    print("Starting job: " + (ret.stdout.decode().split(' '))[-1]) # extracting the job #
+    job_num = (ret.stdout.decode().split(' '))[-1]
+    print("Starting job: " + job_num)  # extracting the job #
+
+    return job_num
 
 
 def restart_job(job_num):
@@ -113,6 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--start', help='App name to run')
     parser.add_argument('--stop', help='Stop job #')
     parser.add_argument('--restart', help='Restart job #')
+    parser.add_argument('--test_restart', help='App name to start job, wait for 10 sec and restart')
 
     # Get arguments from the user
     args = parser.parse_args()
@@ -122,12 +127,18 @@ if __name__ == '__main__':
                            args.overwrite,
                            args.rollback)
         start_job(args.start)
-
     elif args.stop:
         stop_job(args.stop)
-
     elif args.restart:
         restart_job(args.restart)
+    elif args.test_restart:
+        generate_dmtcp_cmd(args.test_restart, args.compress, args.interval if args.interval is not None else 10,
+                           args.overwrite,
+                           args.rollback)
+        job_num = start_job(args.start)
+        time.sleep(11)
+        stop_job(job_num)
+        restart_job(job_num)
     #
     # elif args.compress:
     #     restart_job(args.restart)

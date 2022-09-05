@@ -135,8 +135,10 @@ if __name__ == '__main__':
         generate_dmtcp_cmd(args.test_restart, args.compress, args.interval if args.interval is not None else 10,
                            args.overwrite,
                            args.rollback)
-        job_num = start_job(args.start)
-        time.sleep(11)
+        job_num = start_job(args.test_restart)
+        print("waiting...")
+        time.sleep(25)
+        print("creating checkpoint")
         stop_job(job_num)
         restart_job(job_num)
     #

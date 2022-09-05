@@ -22,8 +22,6 @@ In addition, you should downlowd Python3.7 with the following packages:
 
 ## Know Your Flags
 
-python dmtcpWrapper.py --start hello_test.sh --compress 3 --overwrite 1 --rollback 6
-
 •	--start : Specify the binary file you plan to run under pyDmtcp.
 
 •	--compress : Define if you want to compress the dmtcp files.
@@ -36,4 +34,6 @@ python dmtcpWrapper.py --start hello_test.sh --compress 3 --overwrite 1 --rollba
 
 • --restart : Define the job number to restart (using the dmtcp checkpoint file).
 
-## Example
+## Examples
+
+python3 pyDMTCP.py --start hello_test.sh --compress True --overwrite True --rollback 1

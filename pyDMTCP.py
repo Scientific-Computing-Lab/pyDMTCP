@@ -1,7 +1,5 @@
 import subprocess
 import time
-import shlex
-import sys
 import os
 import argparse
 
@@ -39,9 +37,9 @@ def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True",
     '''
     Generating the dmtcp command line
     :param compress: False - No compression; True - Use compression
-    :param interval: int as time interval between savings
+    :param interval: Time (in seconds) paramter as interval between savings
     :param overwrite: False - Don't overwrite last checkpoint; True - Overwrite last checkpoint
-    :param rollback: int parameter for how many chekpoints to save
+    :param rollback: Parameter for how many chekpoints to save
     :return: None, saving the full sbatch with config
     '''
 
@@ -57,7 +55,7 @@ def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True",
     # if rollback != 1:
     # dmtcp_cmd.append("rollback=" + str(rollback))
     # TODO: Fix the rollback command
-    dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build/" + app_name + " -i 50 -s 200")
+    dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 140")
     # TODO: Add app and mpirun params
     last_cmd = " ".join(dmtcp_cmd) + "\n"
     print("Writing sbatch_test.sh")
@@ -70,7 +68,7 @@ def start_job(app_name):
     :return:
     '''
 
-    command = "echo $PWD ; ml dmtcp/v2.6-intel-impi ; sbatch sbatch_test.sh"
+    command = "ml dmtcp/v2.6-intel-impi ; sbatch sbatch_test.sh"
     ret = subprocess.run(command, capture_output=True, shell=True)
     print(ret.stdout.decode())
     job_num = (ret.stdout.decode().split(' '))[-1]
@@ -95,9 +93,6 @@ def restart_job(job_num):
 
 
 def stop_job(job_num):
-    # using scancel to stop the job
-    # TODO: validate checkpoint created
-    # subprocess.run()
     print("Stopping job: " + str(job_num))
     command = "scancel " + job_num
     ret = subprocess.run(command, capture_output=True, shell=True)
@@ -105,22 +100,27 @@ def stop_job(job_num):
 
 
 if __name__ == '__main__':
-    os.chdir("/home/gabid/LULESH/build")
+    os.chdir("/home/gabid/LULESH/build_copy")
     # for help --help
     parser = argparse.ArgumentParser(description='Running DMTCP')
     # DMTCP commands
     parser.add_argument('--compress', help='Compress checkpoint file False - No compression ; True - Do compression')
-    parser.add_argument('--rollback', help='# of rollback check points')
+    parser.add_argument('--rollback', help='Define how many rollback check points to save')
     parser.add_argument('--overwrite',
                         help='False - Do not overwrite last checkpoint ; True - overwriting in cycle last checkpoint')
-    parser.add_argument('--interval', help='# of seconds to create checkpoint')
+    parser.add_argument('--interval', help='Cycle interval in seconds for create checkpoint')
     parser.add_argument('--start', help='App name to run')
     parser.add_argument('--stop', help='Stop job #')
     parser.add_argument('--restart', help='Restart job #')
+    parser.add_argument('--nodes', help='Number nodes to execute the job')
+    parser.add_argument('--move', help='Node name to restart the job (from last checkpoint)')
     parser.add_argument('--test_restart', help='App name to start job, wait for 10 sec and restart')
 
     # Get arguments from the user
     args = parser.parse_args()
+    print(args)
+
+    #TODO: add move, nodes flags
 
     if args.start:
         generate_dmtcp_cmd(args.start, args.compress, args.interval if args.interval is not None else 10,
@@ -132,7 +132,9 @@ if __name__ == '__main__':
     elif args.restart:
         restart_job(args.restart)
     elif args.test_restart:
-        generate_dmtcp_cmd(args.test_restart, args.compress, args.interval if args.interval is not None else 10,
+        generate_dmtcp_cmd(args.test_restart,
+                           args.compress,
+                           args.interval if args.interval is not None else 10,
                            args.overwrite,
                            args.rollback)
         job_num = start_job(args.test_restart)
@@ -141,15 +143,3 @@ if __name__ == '__main__':
         print("creating checkpoint")
         stop_job(job_num)
         restart_job(job_num)
-    #
-    # elif args.compress:
-    #     restart_job(args.restart)
-    #
-    # elif args.rollback:
-    #     restart_job(args.restart)
-    #
-    # elif args.overwrite:
-    #     restart_job(args.restart)
-    #
-    # elif args.interval:
-    #     restart_job(args.restart)

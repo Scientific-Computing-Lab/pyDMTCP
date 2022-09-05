@@ -10,7 +10,7 @@ def get_node_list():
     sep = re.compile('[\s]+')
     for line in node_list_info:
         # print(line)
-        #print(sep.split(line))
+        print(sep.split(line))
         print(line.split(' ')[-1])
 
 

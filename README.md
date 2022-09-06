@@ -37,6 +37,8 @@ In addition, you should downlowd Python3.7 with the following packages:
 ## Examples
 
 python3 pyDMTCP.py --start lulesh2.0 --compress True --overwrite True --rollback 1
+
 python3 pyDMTCP.py --stop 100685
+
 python3 pyDMTCP.py --test_restart lulesh2.0 --compress True --overwrite True --rollback 1
 

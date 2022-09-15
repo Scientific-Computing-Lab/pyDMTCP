@@ -4,11 +4,11 @@ import re
 
 
 def get_avail_partitions():
-    cmd1 = "sinfo"
-    ret = subprocess.run(cmd1, capture_output=True, shell=True)
+    # cmd1 = "sinfo"
+    # ret = subprocess.run(cmd1, capture_output=True, shell=True)
     cmd2 = "sacctmgr list associations where user=$USER format=User,MaxJobs,Partition,GrpCPUs"
     ret = subprocess.run(cmd2, capture_output=True, shell=True)
-    # print(ret.stdout.decode())
+    print(ret.stdout.decode())
     node_list_info = (ret.stdout.decode().split('\n'))
     sep = re.compile('[\s]+')
     partitions = []
@@ -18,10 +18,17 @@ def get_avail_partitions():
             partitions.append(part_values[-2])
 
     partitions = partitions[2:]  # remove the header
+    print(partitions)
     return partitions
 
-def get_avail_nodes():
-    cmd =
+
+def get_avail_nodes(partitions):
+    cmd1 = "sinfo"
+    ret = subprocess.run(cmd1, capture_output=True, shell=True)
+    raw_data = ret.stdout.decode()
+    y = [x for x in raw_data.split('\n')[1:] if len(x)>0]
+    lines = [node.split() for node in y if (node.split())[0] in partitions]
+    print(lines)
 
 
-get_avail_partitions()
+get_avail_nodes(get_avail_partitions())

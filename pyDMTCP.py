@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 import argparse
-import node_db_creator
+import node_db_creator as node_db
 
 
 def sbatch_str_gen():
@@ -56,7 +56,7 @@ def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True",
     # if rollback != 1:
     # dmtcp_cmd.append("rollback=" + str(rollback))
     # TODO: Fix the rollback command
-    dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 140")
+    dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
     # TODO: Add app and mpirun params
     last_cmd = " ".join(dmtcp_cmd) + "\n"
     print("Writing sbatch_test.sh")
@@ -101,6 +101,8 @@ def stop_job(job_num):
 
 
 if __name__ == '__main__':
+    avial_nodes = node_db.get_avail_nodes(node_db.get_avail_partitions())
+    print(avial_nodes)
     os.chdir("/home/gabid/LULESH/build_copy")
     # for help --help
     parser = argparse.ArgumentParser(description='Running DMTCP')
@@ -121,7 +123,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
-    #TODO: add move, nodes flags
+    # TODO: add move, nodes flags
 
     if args.start:
         generate_dmtcp_cmd(args.start, args.compress, args.interval if args.interval is not None else 10,

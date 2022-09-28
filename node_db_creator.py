@@ -2,6 +2,11 @@ import os
 import subprocess
 import re
 
+'''
+This class generating available nodes per user.
+TODO: create data struct for same params nodes
+'''
+
 
 def get_avail_partitions():
     # cmd1 = "sinfo"

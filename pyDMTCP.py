@@ -2,6 +2,7 @@ import subprocess
 import time
 import os
 import argparse
+import node_db_creator
 
 
 def sbatch_str_gen():

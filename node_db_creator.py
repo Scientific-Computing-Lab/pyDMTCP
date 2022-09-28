@@ -41,8 +41,8 @@ def get_avail_nodes(partitions):
                 else:
                     output.add("node" + str(nums))
 
-    print(sorted(output))
-    return output
+    return (sorted(output))
 
 
-get_avail_nodes(get_avail_partitions())
+if __name__ == "__main__":
+    print(get_avail_nodes(get_avail_partitions()))

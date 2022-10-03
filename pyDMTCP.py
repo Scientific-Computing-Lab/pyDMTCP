@@ -14,11 +14,27 @@ def sbatch_str_gen():
     ret = []
     ret.append("#!/bin/bash\n")
     ret.append("#SBATCH -n 1 -N 1 --exclusive -p mixedp\n")
-    ret.append("module swap gnu8 intel/18.0.1.163")
-    ret.append("module swap openmpi3 openmpi/4.1.3-intel")
+    # ret.append("module swap gnu8 intel/18.0.1.163")
+    # ret.append("module swap openmpi3 openmpi/4.1.3-intel")
+    ret.append("ml purge")
     ret.append("ml openmpi/4.1.3-intel")
     ret.append("ml dmtcp/v2.6-intel18")
     ret.append("export OMP_NUM_THREADS=16\n")
+    return '\n'.join(ret)
+
+
+def sbatch_restart_file_gen():
+    '''
+    Create the sbatch restart file
+    :return: Lines as string to save in sbach restart file
+    '''
+
+    ret = []
+    ret.append("#!/bin/bash\n")
+    ret.append("#SBATCH -n 1 -N 1 --exclusive -p mixedp --error=slurm-%j.err\n")
+    ret.append("ml purge")
+    ret.append("ml dmtcp/v2.6-intel18")
+    # ret.append("export OMP_NUM_THREADS=16\n")
     return '\n'.join(ret)
 
 
@@ -34,7 +50,7 @@ def write_sbatch_file(fname, data):
         fn.write(data)
 
 
-def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True", rollback=1):
+def generate_dmtcp_cmd(app_name, compress="True", interval=5, overwrite="True", rollback=1):
     '''
     Generating the dmtcp command line
     :param compress: False - No compression; True - Use compression
@@ -56,7 +72,8 @@ def generate_dmtcp_cmd(app_name, compress="True", interval=10, overwrite="True",
     # if rollback != 1:
     # dmtcp_cmd.append("rollback=" + str(rollback))
     # TODO: Fix the rollback command
-    dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
+    # dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
+    dmtcp_cmd.append(" /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
     # TODO: Add app and mpirun params
     last_cmd = " ".join(dmtcp_cmd) + "\n"
     print("Writing sbatch_test.sh")
@@ -85,9 +102,17 @@ def restart_job(job_num):
     :param job_num:
     :return:
     '''
-    # using sbatch shell file restart to run the last check point
-    command = "sbatch_slurm_restart.sh"
+    # create sbatch shell file restart to run the last check point
+    command = "ls *.dmtcp"
     ret = subprocess.run(command, capture_output=True, shell=True)
+    fname = ret.stdout.decode().split()[:-1]
+    print(fname)
+    restart_file_cmd = sbatch_restart_file_gen()
+    restart_file_cmd += ("dmtcp_restart " + fname + "\n")
+    restart_fname = "sbatch_slurm_restart.sh"
+    write_sbatch_file(restart_fname, restart_file_cmd)
+
+    ret = subprocess.run(restart_fname, capture_output=True, shell=True)
     print(ret.stdout.decode())
     print("Restarting job: " + (ret.stdout.decode().split(' '))[-1])
     print("Restarting Job: " + str(job_num))

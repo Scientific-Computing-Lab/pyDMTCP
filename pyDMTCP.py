@@ -73,7 +73,8 @@ def generate_dmtcp_cmd(app_name, compress="True", interval=5, overwrite="True", 
     # dmtcp_cmd.append("rollback=" + str(rollback))
     # TODO: Fix the rollback command
     # dmtcp_cmd.append("mpirun -n 1 /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
-    dmtcp_cmd.append(" /home/gabid/LULESH/build_copy/" + app_name + " -i 50 -s 120")
+    # dmtcp_cmd.append(" /home/gabid/LULESH/build_copy/" + app_name + " -i 60 -s 120")
+    dmtcp_cmd.append(" /home/gabid/LULESH/build_copy/" + app_name)
     # TODO: Add app and mpirun params
     last_cmd = " ".join(dmtcp_cmd) + "\n"
     print("Writing sbatch_test.sh")
@@ -105,14 +106,14 @@ def restart_job(job_num):
     # create sbatch shell file restart to run the last check point
     command = "ls *.dmtcp"
     ret = subprocess.run(command, capture_output=True, shell=True)
-    fname = ret.stdout.decode().split()[:-1]
+    fname = ret.stdout.decode()
     print(fname)
-    restart_file_cmd = sbatch_restart_file_gen()
+    restart_file_cmd = sbatch_restart_file_gen() + "\n"
     restart_file_cmd += ("dmtcp_restart " + fname + "\n")
     restart_fname = "sbatch_slurm_restart.sh"
     write_sbatch_file(restart_fname, restart_file_cmd)
 
-    ret = subprocess.run(restart_fname, capture_output=True, shell=True)
+    ret = subprocess.run("sbatch " + restart_fname, capture_output=True, shell=True)
     print(ret.stdout.decode())
     print("Restarting job: " + (ret.stdout.decode().split(' '))[-1])
     print("Restarting Job: " + str(job_num))
